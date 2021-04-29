@@ -85,6 +85,7 @@ class EncoderDecoder(BaseSegmentor):
         """Encode images with backbone and decode into a semantic segmentation
         map of the same size as input."""
         x = self.extract_feat(img)
+        # out: [bs, cls, H_input/4, W_input/4]
         out = self._decode_head_forward_test(x, img_metas)
         out = resize(
             input=out,
@@ -213,7 +214,7 @@ class EncoderDecoder(BaseSegmentor):
 
     def whole_inference(self, img, img_meta, rescale):
         """Inference with full image."""
-
+        # seg_logit: [bs, cls, h_input, w_input]
         seg_logit = self.encode_decode(img, img_meta)
         if rescale:
             seg_logit = resize(

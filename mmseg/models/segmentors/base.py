@@ -89,6 +89,7 @@ class BaseSegmentor(nn.Module):
                                 f'{type(var)}')
 
         num_augs = len(imgs)
+
         if num_augs != len(img_metas):
             raise ValueError(f'num of augmentations ({len(imgs)}) != '
                              f'num of image meta ({len(img_metas)})')

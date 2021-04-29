@@ -39,3 +39,4 @@ lr_config = dict(_delete_=True, policy='poly',
 
 # By default, models are trained on 8 GPUs with 2 images per GPU
 data=dict(samples_per_gpu=2)
+work_dir = './work_dirs/tiny_last2'
