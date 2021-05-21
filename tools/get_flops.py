@@ -13,7 +13,7 @@ def parse_args():
         '--shape',
         type=int,
         nargs='+',
-        default=[2048, 1024],
+        default=[512, 512],
         help='input image size')
     args = parser.parse_args()
     return args

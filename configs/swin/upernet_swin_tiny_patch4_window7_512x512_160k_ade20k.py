@@ -7,21 +7,19 @@ model = dict(
         embed_dim=96,
         depths=[2, 2, 6, 2],
         num_heads=[3, 6, 12, 24],
-        out_indices=(2, 3),
         window_size=7,
         ape=False,
         drop_path_rate=0.3,
         patch_norm=True,
-        use_checkpoint=False
+        use_checkpoint=False,
+        out_indices = (0, 1, 2, 3)
     ),
     decode_head=dict(
-        in_channels=[384, 768],
-        in_index=[0, 1],
+        in_channels=[96, 192, 384, 768],
         num_classes=150
     ),
     auxiliary_head=dict(
         in_channels=384,
-        in_index=0,
         num_classes=150
     ))
 

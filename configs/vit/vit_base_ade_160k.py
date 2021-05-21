@@ -10,9 +10,9 @@ model = dict(
         type='VIT',
         img_size=512,
         patch_size=16,
-        embed_dim=384,
+        embed_dim=768,
         depth=12,
-        num_heads=6,
+        num_heads=12,
         ),
     decode_head=dict(
         type='UPerHead',
@@ -58,4 +58,4 @@ lr_config = dict(_delete_=True, policy='poly',
 
 # By default, models are trained on 8 GPUs with 2 images per GPU
 data=dict(samples_per_gpu=2)
-work_dir = './work_dirs/deconv_vit_small_ade_160k'
+work_dir = './work_dirs/vit_base_ade_160k'

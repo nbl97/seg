@@ -172,22 +172,22 @@ class VIT(nn.Module):
         else:
             self.pre_logits = nn.Identity()
 
-        self.stage_0_0 = nn.Sequential(
-            nn.Conv2d(384, 384, 3, 1, 1),
-            build_norm_layer(dict(type='BN', requires_grad=True), 384)[1],
-            nn.ReLU(),
-        )
-        self.stage_0_1 = nn.Sequential(
-            nn.Conv2d(384, 384, 3, 1, 1),
-            build_norm_layer(dict(type='BN', requires_grad=True), 384)[1],
-            nn.ReLU(),
-        )
-        self.stage_1 = nn.Sequential(
-            nn.Conv2d(384, 384, 3, 1, 1),
-            build_norm_layer(dict(type='BN', requires_grad=True), 384)[1],
-            nn.ReLU(),
-        )
-        self.stage_3 = nn.Conv2d(384, 384, 3, 2, 1)
+        # self.stage_0_0 = nn.Sequential(
+        #     nn.Conv2d(384, 384, 3, 1, 1),
+        #     build_norm_layer(dict(type='BN', requires_grad=True), 384)[1],
+        #     nn.ReLU(),
+        # )
+        # self.stage_0_1 = nn.Sequential(
+        #     nn.Conv2d(384, 384, 3, 1, 1),
+        #     build_norm_layer(dict(type='BN', requires_grad=True), 384)[1],
+        #     nn.ReLU(),
+        # )
+        # self.stage_1 = nn.Sequential(
+        #     nn.Conv2d(384, 384, 3, 1, 1),
+        #     build_norm_layer(dict(type='BN', requires_grad=True), 384)[1],
+        #     nn.ReLU(),
+        # )
+        # self.stage_3 = nn.Conv2d(384, 384, 3, 2, 1)
 
     def init_weights(self, pretrained=None):    
         def _init_weights(m, n: str = '', head_bias: float = 0., jax_impl: bool = False):
@@ -240,16 +240,16 @@ class VIT(nn.Module):
     def forward_features(self, x):
         # x: [bs, channel, h, w]
         _, __, h, w = x.shape
+        # use when test
         if h != self.img_size or w != self.img_size:
-            tmp_pos_embed = copy.deepcopy(self.pos_embed)
+            tmp_pos_embed = self.pos_embed
             tmp_pos_embed = tmp_pos_embed.reshape(-1, 32, 32, self.embed_dim).permute(0, 3, 1, 2)
             tmp_pos_embed = torch.nn.functional.interpolate(
                 tmp_pos_embed, size=(int(h/16), int(w/16)), mode='bicubic', align_corners=False)
             tmp_pos_embed = tmp_pos_embed.permute(0, 2, 3, 1).flatten(1, 2)
         else:
             tmp_pos_embed = self.pos_embed
-        x = self.patch_embed(x)
-        # x = self.pos_drop(x + self.pos_embed)
+        x = self.patch_embed(x)    
         x = self.pos_drop(x + tmp_pos_embed)
         outs = []
         for i in range(self.depth):
@@ -261,16 +261,16 @@ class VIT(nn.Module):
                 pw = int(w/16)
                 out = x.view(-1, ph, pw, self.embed_dim).permute(0, 3, 1, 2).contiguous()
                 # deconvolution
-                if i+1 == 2:
-                    out = self.stage_0_0(out)
-                    out = F.interpolate(out, scale_factor=2, mode='bilinear', align_corners=False)
-                    out = self.stage_0_1(out)
-                    out = F.interpolate(out, scale_factor=2, mode='bilinear', align_corners=False)
-                elif i + 1 == 4:
-                    out = self.stage_1(out)
-                    out = F.interpolate(out, scale_factor=2, mode='bilinear', align_corners=False)
-                elif i + 1 == 12:
-                    out = self.stage_3(out)
+                # if i+1 == 2:
+                #     out = self.stage_0_0(out)
+                #     out = F.interpolate(out, scale_factor=2, mode='bilinear', align_corners=False)
+                #     out = self.stage_0_1(out)
+                #     out = F.interpolate(out, scale_factor=2, mode='bilinear', align_corners=False)
+                # elif i + 1 == 4:
+                #     out = self.stage_1(out)
+                #     out = F.interpolate(out, scale_factor=2, mode='bilinear', align_corners=False)
+                # elif i + 1 == 12:
+                #     out = self.stage_3(out)
                 outs.append(out)
         return tuple(outs)
 

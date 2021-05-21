@@ -9,9 +9,10 @@ from .resnext import ResNeXt
 from .unet import UNet
 from .swin_transformer import SwinTransformer
 from .vit import VIT
+from .nostage4_seg import SwinTransformer_nostage4
 
 __all__ = [
     'ResNet', 'ResNetV1c', 'ResNetV1d', 'ResNeXt', 'HRNet', 'FastSCNN',
     'ResNeSt', 'MobileNetV2', 'UNet', 'CGNet', 'MobileNetV3', 'SwinTransformer',
-    'VIT'
+    'VIT', 'SwinTransformer_nostage4'
 ]
